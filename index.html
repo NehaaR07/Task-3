@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>The Tic-Tac-Toe Table</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">The Tic-Tac-Toe Table</h1>
+        <div id="board" class="board">
+            <div class="cell" onclick="handleClick(0)"></div>
+            <div class="cell" onclick="handleClick(1)"></div>
+            <div class="cell" onclick="handleClick(2)"></div>
+            <div class="cell" onclick="handleClick(3)"></div>
+            <div class="cell" onclick="handleClick(4)"></div>
+            <div class="cell" onclick="handleClick(5)"></div>
+            <div class="cell" onclick="handleClick(6)"></div>
+            <div class="cell" onclick="handleClick(7)"></div>
+            <div class="cell" onclick="handleClick(8)"></div>
+        </div>
+        <div class="result" id="result"></div>
+        <button class="reset-button" onclick="resetGame()">Reset Game</button>
+    </div>
+    <script>
+        let currentPlayer = 'X';
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let gameActive = true;
+
+        function handleClick(index) {
+            if (!gameActive || board[index] !== '') return;
+
+            board[index] = currentPlayer;
+            document.getElementsByClassName('cell')[index].innerText = currentPlayer;
+
+            if (checkWin()) {
+                showCongratulationPopup(`Player ${currentPlayer} wins!`);
+                gameActive = false;
+            } else if (board.every(cell => cell !== '')) {
+                showDrawPopup("It's a draw!");
+                gameActive = false;
+            } else {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            }
+        }
+
+        function checkWin() {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+                [0, 4, 8], [2, 4, 6]             // Diagonals
+            ];
+
+            return winPatterns.some(pattern => {
+                const [a, b, c] = pattern;
+                return board[a] && board[a] === board[b] && board[a] === board[c];
+            });
+        }
+
+        function resetGame() {
+            currentPlayer = 'X';
+            board = ['', '', '', '', '', '', '', '', ''];
+            gameActive = true;
+
+            // Clear the board
+            const cells = document.getElementsByClassName('cell');
+            for (let i = 0; i < cells.length; i++) {
+                cells[i].innerText = '';
+            }
+
+            // Clear the result message
+            document.getElementById('result').innerText = '';
+        }
+
+        function showCongratulationPopup(message) {
+            Swal.fire({
+                title: 'Congratulations!',
+                text: message,
+                icon: 'success',
+                confirmButtonText: 'Play Again',
+                onClose: resetGame
+            });
+        }
+
+        function showDrawPopup(message) {
+            Swal.fire({
+                title: 'It\'s a Draw!',
+                text: message,
+                icon: 'info',
+                confirmButtonText: 'Play Again',
+                onClose: resetGame
+            });
+        }
+    </script>
+</body>
+</html>
